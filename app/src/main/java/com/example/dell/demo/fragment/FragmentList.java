@@ -96,6 +96,7 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
             adapter.setStatus(MagicAdapter.STA_NO_DATA);
             adapter.notifyDataSetChanged();
         }
+        mState = STA_US_NORMAL;
     }
 
     /**
@@ -106,13 +107,17 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
         mState = STA_US_NORMAL;
         swipeRefreshLayout.setRefreshing(false);
         adapter.setStatus(MagicAdapter.STA_NET_ERROR);
-        adapter.notifyDataSetChanged();
+//        adapter.notifyDataSetChanged();
     }
 
     @Override
     public void onRefresh() {
-        mState = STA_US_REFRESH;
-        requestData(true);
+        if (mState != STA_US_NORMAL) {
+            swipeRefreshLayout.setRefreshing(false);
+        } else {
+            mState = STA_US_REFRESH;
+            requestData(true);
+        }
     }
 
     protected abstract void requestData(boolean isRefresh);
@@ -125,7 +130,7 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
         }
         // 数据已经全部加载，或数据为空时，或正在加载，不处理滚动事件
         if (adapter.getStatus() == MagicAdapter.STA_NO_DATA || adapter.getStatus() == MagicAdapter.STA_ALL_LOADED
-                || adapter.getStatus() == MagicAdapter.STA_LOADING) {
+                || adapter.getStatus() == MagicAdapter.STA_LOADING || mState == STA_US_REFRESH) {
             return;
         }
         boolean scrollEnd = false;
@@ -154,7 +159,7 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
 
     }
 
-    public void showRefreshView(){
+    public void showRefreshView() {
         swipeRefreshLayout.setRefreshing(true);
     }
 }
