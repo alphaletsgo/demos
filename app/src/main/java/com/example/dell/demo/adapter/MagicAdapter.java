@@ -18,9 +18,6 @@ import java.util.List;
  */
 public abstract class MagicAdapter<T> extends BaseAdapter {
     private List<T> data = new ArrayList<T>();
-    /**
-     * 定义状态
-     */
     public static final int STA_NO_DATA = 0;//没有数据
     public static final int STA_NET_ERROR = -1;//网络错误
     public static final int STA_LOAD_MORE = 1;//加载更多

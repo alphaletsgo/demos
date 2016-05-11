@@ -13,6 +13,8 @@ import com.example.dell.demo.fragment.FragmentList;
 import java.util.ArrayList;
 import java.util.Random;
 
+import cn.isif.alibs.utils.log.ALog;
+
 /**
  * Created by dell on 2016/5/4.
  */
@@ -49,9 +51,10 @@ public class StringFragment extends FragmentList {
         requestData();
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+    @Override
+    public void onItemClicked(AdapterView parent, View view, int position, long id) {
+        ALog.d(""+position);
     }
 
     public static ArrayList<String> getData() {

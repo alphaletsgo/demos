@@ -69,6 +69,8 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (position!=adapter.getCount()){
             onItemClicked(parent,view,position,id);
+        }else {
+
         }
     }
 
