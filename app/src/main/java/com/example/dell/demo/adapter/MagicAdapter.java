@@ -142,13 +142,6 @@ public abstract class MagicAdapter<T> extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void initData(List<T> data) {
-        if (data == null) return;
-        this.data.clear();
-        this.data.addAll(data);
-        notifyDataSetChanged();
-    }
-
     public void removeAll() {
         this.data.clear();
         notifyDataSetChanged();
@@ -190,6 +183,17 @@ public abstract class MagicAdapter<T> extends BaseAdapter {
         progress.setVisibility(View.VISIBLE);
         text.setVisibility(View.VISIBLE);
         text.setText(loading);
+    }
+
+    public void setFooterViewText(String msg) {
+        if (footerView == null) return;
+        ProgressBar progress = (ProgressBar) footerView
+                .findViewById(R.id.progressBar);
+        TextView text = (TextView) footerView.findViewById(R.id.state_info);
+        footerView.setVisibility(View.VISIBLE);
+        progress.setVisibility(View.GONE);
+        text.setVisibility(View.VISIBLE);
+        text.setText(msg);
     }
 
 }

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">demo</string>
+    <string name="format_comment"><font color="#5a9fe9">%1$s :</font><font color="#5a9fe9">%2$s :</font><font color="">%3$s </font> <font color="#939596">%4$s </font></string>
+    <string name="welcome_messages">Hello, %1$s! You have %2$d new messages.</string>
 </resources>

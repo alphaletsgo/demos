@@ -2,6 +2,7 @@ package com.example.dell.demo;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 
 
 public class MainActivity extends AppCompatActivity {

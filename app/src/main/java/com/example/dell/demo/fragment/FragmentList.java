@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -22,7 +23,7 @@ import cn.isif.alibs.utils.log.ALog;
 /**
  * Created by dell on 2016/4/29.
  */
-public abstract class FragmentList<T> extends Fragment implements AbsListView.OnScrollListener, SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
+public abstract class FragmentList<T> extends Fragment implements AbsListView.OnScrollListener, SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, View.OnTouchListener {
     public int currentPage = 0;//当前页码
     public int pageSize = 10;//页面大小默认是10
     public MagicAdapter<T> adapter = null;
@@ -32,6 +33,7 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
     private static int STA_US_NORMAL = 0;
     private static int STA_US_LOADING = 1;
     private static int mState = STA_US_NORMAL;
+
 
     @Nullable
     @Override
@@ -51,9 +53,26 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
         adapter = createAdapter();
         mListView.setAdapter(adapter);
         mListView.setOnScrollListener(this);
+        mListView.setOnTouchListener(this);
+        mListView.setOnItemClickListener(this);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
         swipeRefreshLayout.setOnRefreshListener(this);
     }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        //处理刷新事件
+        return mState == STA_US_REFRESH;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (position!=adapter.getCount()){
+            onItemClicked(parent,view,position,id);
+        }
+    }
+
+    public abstract void onItemClicked(AdapterView<?> parent, View view, int position, long id);
 
     public abstract void withView();
 
@@ -66,17 +85,12 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
      * @param data
      */
     protected void loadingData(List<T> data) {
-        ALog.d("数据加载完成:" + data.size());
+        int adapterState = MagicAdapter.STA_NO_DATA;
         swipeRefreshLayout.setRefreshing(false);
         if (data == null) {
             data = new ArrayList<T>();
         }
-        ALog.d("PageSize:" + currentPage);
-        if (currentPage == 0 || mState == STA_US_REFRESH) {//刷新数据，清除数据
-            ALog.d("清除数据");
-            adapter.removeAll();
-        }
-        int adapterState = MagicAdapter.STA_NO_DATA;
+
         if ((adapter.getCount() + data.size()) == 0) {
             adapterState = MagicAdapter.STA_NO_DATA;
             ALog.d("数据加载完成:no data");
@@ -84,18 +98,19 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
                 || (data.size() < pageSize && currentPage == 0)) {
             ALog.d("数据加载完成:all data loaded");
             adapterState = MagicAdapter.STA_ALL_LOADED;
-            adapter.notifyDataSetChanged();
         } else {
             ALog.d("数据加载完成:load more data");
             adapterState = MagicAdapter.STA_LOAD_MORE;
         }
         adapter.setStatus(adapterState);
-        adapter.addData(data);
-        // 判断等于是因为最后有一项是listview的状态
-        if (adapter.getCount() == 1) {
-            adapter.setStatus(MagicAdapter.STA_NO_DATA);
-            adapter.notifyDataSetChanged();
+        if (currentPage == 0 || mState == STA_US_REFRESH) {//刷新数据，清除数据
+            adapter.removeAll();
+            adapter.addData(data);
+            currentPage = mState == STA_US_REFRESH ? 0 : currentPage;
+        } else {
+            adapter.addData(data);
         }
+        ALog.d("current page:" + currentPage);
         mState = STA_US_NORMAL;
     }
 
@@ -107,7 +122,7 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
         mState = STA_US_NORMAL;
         swipeRefreshLayout.setRefreshing(false);
         adapter.setStatus(MagicAdapter.STA_NET_ERROR);
-//        adapter.notifyDataSetChanged();
+        adapter.setFooterViewText("加载错误点击重试");
     }
 
     @Override
@@ -131,27 +146,30 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
         // 数据已经全部加载，或数据为空时，或正在加载，不处理滚动事件
         if (adapter.getStatus() == MagicAdapter.STA_NO_DATA || adapter.getStatus() == MagicAdapter.STA_ALL_LOADED
                 || adapter.getStatus() == MagicAdapter.STA_LOADING || mState == STA_US_REFRESH) {
+            adapter.setFooterViewText("点击加载更多");
             return;
         }
-        boolean scrollEnd = false;
+        boolean scrollBottom = false;
         try {
             if (view.getPositionForView(adapter.getFooterView()) == view
                     .getLastVisiblePosition())
                 ALog.d("滑动到底部");
-            scrollEnd = true;
+            scrollBottom = true;
         } catch (Exception e) {
-            scrollEnd = false;
+            scrollBottom = false;
         }
 
-        if (scrollEnd) {
+        if (scrollBottom && mState != STA_US_LOADING) {
             if (adapter.getStatus() == MagicAdapter.STA_LOAD_MORE || adapter.getStatus() == MagicAdapter.STA_NET_ERROR) {
                 currentPage++;
-                adapter.setStatus(MagicAdapter.STA_LOADING);
                 mState = STA_US_LOADING;
                 requestData(false);
                 adapter.setFooterViewLoading();
             }
         }
+
+
+
     }
 
     @Override
