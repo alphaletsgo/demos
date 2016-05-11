@@ -36,9 +36,15 @@ public class StringFragment extends FragmentList {
     };
 
     @Override
+    public View getHeaderView() {
+        return null;
+    }
+
+    @Override
     public void withView() {
         showRefreshView();
         requestData(false);
+
     }
 
     @Override

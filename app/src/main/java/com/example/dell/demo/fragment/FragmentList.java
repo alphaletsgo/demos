@@ -33,6 +33,7 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
     private static int STA_US_NORMAL = 0;
     private static int STA_US_LOADING = 1;
     private static int mState = STA_US_NORMAL;
+    private View headerView = null;
 
 
     @Nullable
@@ -51,6 +52,7 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
     public void initView(View view) {
         mListView = (ListView) view.findViewById(R.id.list);
         adapter = createAdapter();
+        setHeaderView();
         mListView.setAdapter(adapter);
         mListView.setOnScrollListener(this);
         mListView.setOnTouchListener(this);
@@ -73,6 +75,16 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
 
         }
     }
+
+    private void setHeaderView(){
+        View view = getHeaderView();
+        if (view!=null){
+            mListView.addHeaderView(view);
+        }
+
+    }
+
+    public abstract View getHeaderView();
 
     public abstract void onItemClicked(AdapterView<?> parent, View view, int position, long id);
 
