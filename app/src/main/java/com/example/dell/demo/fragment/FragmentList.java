@@ -33,7 +33,7 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
     private static int STA_US_NORMAL = 0;
     private static int STA_US_LOADING = 1;
     private static int mState = STA_US_NORMAL;
-    private View headerView = null;
+    private ViewGroup headerView = null;
 
 
     @Nullable
@@ -77,14 +77,14 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
     }
 
     private void setHeaderView(){
-        View view = getHeaderView();
+        ViewGroup view = getHeaderView();
         if (view!=null){
             mListView.addHeaderView(view);
         }
 
     }
 
-    public abstract View getHeaderView();
+    public abstract ViewGroup getHeaderView();
 
     public abstract void onItemClicked(AdapterView<?> parent, View view, int position, long id);
 

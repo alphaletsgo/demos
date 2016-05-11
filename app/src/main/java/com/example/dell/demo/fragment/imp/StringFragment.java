@@ -4,8 +4,11 @@ package com.example.dell.demo.fragment.imp;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.TextView;
 
+import com.example.dell.demo.R;
 import com.example.dell.demo.adapter.MagicAdapter;
 import com.example.dell.demo.adapter.imp.StringAdapter;
 import com.example.dell.demo.fragment.FragmentList;
@@ -36,8 +39,9 @@ public class StringFragment extends FragmentList {
     };
 
     @Override
-    public View getHeaderView() {
-        return null;
+    public ViewGroup getHeaderView() {
+        ViewGroup views = (ViewGroup) View.inflate(this.getActivity(), R.layout.header,null);
+        return views;
     }
 
     @Override
