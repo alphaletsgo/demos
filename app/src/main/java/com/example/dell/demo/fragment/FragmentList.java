@@ -69,19 +69,18 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (position!=adapter.getCount()){
-            onItemClicked(parent,view,position,id);
-        }else {
+        if (position != adapter.getCount()) {
+            onItemClicked(parent, view, position, id);
+        } else {
 
         }
     }
 
-    private void setHeaderView(){
+    private void setHeaderView() {
         ViewGroup view = getHeaderView();
-        if (view!=null){
+        if (view != null) {
             mListView.addHeaderView(view);
         }
-
     }
 
     public abstract ViewGroup getHeaderView();
@@ -181,7 +180,6 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
                 adapter.setFooterViewLoading();
             }
         }
-
 
 
     }

@@ -28,8 +28,8 @@ public class StringFragment extends FragmentList {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 1:
-                    ArrayList<String> datas = (ArrayList<String>) msg.obj;
-                    loadingData(datas);
+                    ArrayList<String> data = (ArrayList<String>) msg.obj;
+                    loadingData(data);
                     break;
                 default:
                     break;
