@@ -38,15 +38,14 @@ public class StringFragment extends FragmentList {
         }
     };
 
-    @Override
-    public ViewGroup getHeaderView() {
-        ViewGroup views = (ViewGroup) View.inflate(this.getActivity(), R.layout.header,null);
-        return views;
-    }
+//    @Override
+//    public ViewGroup getHeaderView() {
+//        ViewGroup views = (ViewGroup) View.inflate(this.getActivity(), R.layout.header,null);
+//        return views;
+//    }
 
     @Override
     public void withView() {
-        showRefreshView();
         requestData(false);
 
     }

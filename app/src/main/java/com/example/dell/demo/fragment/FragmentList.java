@@ -23,18 +23,18 @@ import cn.isif.alibs.utils.log.ALog;
 /**
  * Created by dell on 2016/4/29.
  */
-public abstract class FragmentList<T> extends Fragment implements AbsListView.OnScrollListener, SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener, View.OnTouchListener {
+public abstract class FragmentList<T> extends Fragment implements AbsListView.OnScrollListener, SwipeRefreshLayout.OnRefreshListener,
+        AdapterView.OnItemClickListener, View.OnTouchListener {
     public int currentPage = 0;//当前页码
     public int pageSize = 10;//页面大小默认是10
     public MagicAdapter<T> adapter = null;
     public ListView mListView = null;
     private SwipeRefreshLayout swipeRefreshLayout = null;
-    private static int STA_US_REFRESH = -1;
-    private static int STA_US_NORMAL = 0;
-    private static int STA_US_LOADING = 1;
-    private static int mState = STA_US_NORMAL;
-    private ViewGroup headerView = null;
-
+    private static int STA_US_REFRESH = -1;//刷新状态
+    private static int STA_US_NORMAL = 0;//正常状态
+    private static int STA_US_LOADING = 1;//加载中
+    private static int mState = STA_US_NORMAL;//标识当前列表状态
+    private ViewGroup headerView = null;//头部视图
 
     @Nullable
     @Override
@@ -69,10 +69,15 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (position != adapter.getCount()) {
+        if (view != adapter.getFooterView()) {
             onItemClicked(parent, view, position, id);
         } else {
-
+            if (mState != STA_US_LOADING) {
+                currentPage++;
+                mState = STA_US_LOADING;
+                requestData(false);
+                adapter.setFooterViewLoading();
+            }
         }
     }
 
@@ -83,14 +88,15 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
         }
     }
 
-    public abstract ViewGroup getHeaderView();
-
-    public abstract void onItemClicked(AdapterView<?> parent, View view, int position, long id);
-
-    public abstract void withView();
-
-    public abstract MagicAdapter<T> createAdapter();
-
+    /**
+     * 可以设置listView的header
+     * 如果该方法返回@nil则不会添加
+     *
+     * @return
+     */
+    public ViewGroup getHeaderView() {
+        return null;
+    }
 
     /**
      * 当数据加载完成
@@ -135,7 +141,7 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
         mState = STA_US_NORMAL;
         swipeRefreshLayout.setRefreshing(false);
         adapter.setStatus(MagicAdapter.STA_NET_ERROR);
-        adapter.setFooterViewText("加载错误点击重试");
+        adapter.setFooterViewText("加载错误点击重试", false);
     }
 
     @Override
@@ -148,9 +154,6 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
         }
     }
 
-    protected abstract void requestData(boolean isRefresh);
-
-
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
         if (adapter == null || adapter.getCount() == 0) {
@@ -159,15 +162,14 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
         // 数据已经全部加载，或数据为空时，或正在加载，不处理滚动事件
         if (adapter.getStatus() == MagicAdapter.STA_NO_DATA || adapter.getStatus() == MagicAdapter.STA_ALL_LOADED
                 || adapter.getStatus() == MagicAdapter.STA_LOADING || mState == STA_US_REFRESH) {
-            adapter.setFooterViewText("点击加载更多");
+            adapter.setFooterViewText("点击加载更多", false);
             return;
         }
         boolean scrollBottom = false;
         try {
             if (view.getPositionForView(adapter.getFooterView()) == view
                     .getLastVisiblePosition())
-                ALog.d("滑动到底部");
-            scrollBottom = true;
+                scrollBottom = true;
         } catch (Exception e) {
             scrollBottom = false;
         }
@@ -180,16 +182,66 @@ public abstract class FragmentList<T> extends Fragment implements AbsListView.On
                 adapter.setFooterViewLoading();
             }
         }
-
-
     }
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
+        ALog.d("firstVisibleItem:" + firstVisibleItem + "visibleItemCount:" + visibleItemCount + "totalItemCount:" + totalItemCount);
     }
 
-    public void showRefreshView() {
-        swipeRefreshLayout.setRefreshing(true);
+    /**
+     * 数据请求回调
+     *
+     * @param isRefresh
+     */
+    protected abstract void requestData(boolean isRefresh);
+
+    /**
+     * 处理item点击事件
+     *
+     * @param parent
+     * @param view
+     * @param position
+     * @param id
+     */
+    public abstract void onItemClicked(AdapterView<?> parent, View view, int position, long id);
+
+    /**
+     * 初始化ui操作
+     */
+    public abstract void withView();
+
+    /**
+     * 设置adapter
+     *
+     * @return
+     */
+    public abstract MagicAdapter<T> createAdapter();
+
+    /**
+     * 获取当前页码
+     *
+     * @return
+     */
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    /**
+     * 获取加载条目
+     *
+     * @return
+     */
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    /**
+     * 设置加载条目
+     *
+     * @param pageSize
+     */
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
     }
 }

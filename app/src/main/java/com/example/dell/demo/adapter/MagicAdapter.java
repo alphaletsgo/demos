@@ -30,7 +30,7 @@ public abstract class MagicAdapter<T> extends BaseAdapter {
     private final String allLoaded = "已加载全部";
     private final String getError = "数据获取错误";
     private final String loading = "正在加载中";
-    protected int mStatus = STA_NO_DATA;
+    protected int mStatus = STA_LOADING;
     private LinearLayout footerView = null;
 
 
@@ -168,27 +168,35 @@ public abstract class MagicAdapter<T> extends BaseAdapter {
         return footerView;
     }
 
-    /**
-     * 底部加载视图
-     */
-    public void setFooterViewLoading() {
-        if (footerView == null) return;
-        ProgressBar progress = (ProgressBar) footerView
-                .findViewById(R.id.progressBar);
-        TextView text = (TextView) footerView.findViewById(R.id.state_info);
-        footerView.setVisibility(View.VISIBLE);
-        progress.setVisibility(View.VISIBLE);
-        text.setVisibility(View.VISIBLE);
-        text.setText(loading);
+    public void setFooterViewLoadMore() {
+        setFooterViewText(loadMore, false);
     }
 
-    public void setFooterViewText(String msg) {
+    public void setFooterViewLoading() {
+        setFooterViewText(loading, true);
+    }
+
+    public void setFooterViewGetError() {
+        setFooterViewText(getError, false);
+    }
+
+    public void setFooterViewNetError() {
+        setFooterViewText(netError, false);
+    }
+
+    /**
+     * 自定义底部显示文字
+     *
+     * @param msg
+     * @param running
+     */
+    public void setFooterViewText(String msg, boolean running) {
         if (footerView == null) return;
         ProgressBar progress = (ProgressBar) footerView
                 .findViewById(R.id.progressBar);
         TextView text = (TextView) footerView.findViewById(R.id.state_info);
         footerView.setVisibility(View.VISIBLE);
-        progress.setVisibility(View.GONE);
+        progress.setVisibility(running ? View.VISIBLE : View.GONE);
         text.setVisibility(View.VISIBLE);
         text.setText(msg);
     }
