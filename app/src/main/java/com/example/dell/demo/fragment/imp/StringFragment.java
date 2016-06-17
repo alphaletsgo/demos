@@ -4,11 +4,7 @@ package com.example.dell.demo.fragment.imp;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.TextView;
-
-import com.example.dell.demo.R;
 import com.example.dell.demo.adapter.MagicAdapter;
 import com.example.dell.demo.adapter.imp.StringAdapter;
 import com.example.dell.demo.fragment.FragmentList;
@@ -22,7 +18,8 @@ import cn.isif.alibs.utils.log.ALog;
  * Created by dell on 2016/5/4.
  */
 public class StringFragment extends FragmentList {
-    public static String[] data = {"one", "two", "three", "four", "five", "six", "sven", "lai", "deo", "fre", "tec", "tep", "oop"};
+//    public static String[] data = {"one", "two", "three", "four", "five", "six", "sven", "lai", "deo", "fre", "tec", "tep", "oop"};
+    public static String[] data = {"one", "two", "three", "four", "five"};
     public Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -38,11 +35,6 @@ public class StringFragment extends FragmentList {
         }
     };
 
-//    @Override
-//    public ViewGroup getHeaderView() {
-//        ViewGroup views = (ViewGroup) View.inflate(this.getActivity(), R.layout.header,null);
-//        return views;
-//    }
 
     @Override
     public void withView() {

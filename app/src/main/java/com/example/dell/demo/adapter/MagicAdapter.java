@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+
 import com.example.dell.demo.R;
 
 import java.util.ArrayList;
@@ -19,18 +20,19 @@ import java.util.List;
 public abstract class MagicAdapter<T> extends BaseAdapter {
     private List<T> data = new ArrayList<T>();
     public static final int STA_NO_DATA = 0;//没有数据
-    public static final int STA_NET_ERROR = -1;//网络错误
     public static final int STA_LOAD_MORE = 1;//加载更多
+    public static final int STA_CLICK_LOAD_MORE = -1;//点击加载更多
     public static final int STA_ALL_LOADED = 2;//数据加载完毕
     public static final int STA_GET_ERROR = -2;//获取数据失败
     public static final int STA_LOADING = 3;//正在加载中
     private final String noData = "没有数据";
     private final String netError = "网络异常";
     private final String loadMore = "加载更多";
+    private final String loadMoreByClick = "点击加载更多";
     private final String allLoaded = "已加载全部";
     private final String getError = "数据获取错误";
     private final String loading = "正在加载中";
-    protected int mStatus = STA_LOADING;
+    protected int mStatus = STA_NO_DATA;
     private LinearLayout footerView = null;
 
 
@@ -39,14 +41,10 @@ public abstract class MagicAdapter<T> extends BaseAdapter {
         switch (mStatus) {
             case STA_NO_DATA:
                 return 1;
-            case STA_NET_ERROR:
-                return 1;
+            case STA_CLICK_LOAD_MORE:
             case STA_LOAD_MORE:
-                return getSize() + 1;
             case STA_ALL_LOADED:
-                return getSize() + 1;
             case STA_GET_ERROR:
-                return getSize() + 1;
             case STA_LOADING:
                 return getSize() + 1;
             default:
@@ -79,14 +77,8 @@ public abstract class MagicAdapter<T> extends BaseAdapter {
                 case STA_NO_DATA://没有数据
                     footerView.setVisibility(View.VISIBLE);
                     progress.setVisibility(View.GONE);
-                    text.setVisibility(View.VISIBLE);
+                    text.setVisibility(View.GONE);
                     text.setText(noData);
-                    break;
-                case STA_NET_ERROR://网络异常
-                    footerView.setVisibility(View.VISIBLE);
-                    progress.setVisibility(View.GONE);
-                    text.setVisibility(View.VISIBLE);
-                    text.setText(netError);
                     break;
                 case STA_LOAD_MORE://加载更多
                     setFooterViewLoading();
@@ -109,10 +101,12 @@ public abstract class MagicAdapter<T> extends BaseAdapter {
                     text.setVisibility(View.VISIBLE);
                     text.setText(loading);
                     break;
+                case STA_CLICK_LOAD_MORE:
                 default://默认不显示
-                    footerView.setVisibility(View.GONE);
+                    footerView.setVisibility(View.VISIBLE);
                     progress.setVisibility(View.GONE);
-                    text.setVisibility(View.GONE);
+                    text.setVisibility(View.VISIBLE);
+                    text.setText(loadMoreByClick);
                     break;
             }
             return footerView;
@@ -150,6 +144,14 @@ public abstract class MagicAdapter<T> extends BaseAdapter {
         } else {
             return null;
         }
+    }
+
+    public List<T> getData() {
+        return data;
+    }
+
+    public void setData(List<T> data) {
+        this.data = data;
     }
 
     public int getSize() {
