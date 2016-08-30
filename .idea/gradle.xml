@@ -8,17 +8,15 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/rx" />
-            <option value="$PROJECT_DIR$/video" />
+            <option value="$PROJECT_DIR$/refreshlist" />
+            <option value="$PROJECT_DIR$/timeline" />
           </set>
         </option>
         <option name="myModules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/rx" />
-            <option value="$PROJECT_DIR$/video" />
+            <option value="$PROJECT_DIR$/refreshlist" />
+            <option value="$PROJECT_DIR$/timeline" />
           </set>
         </option>
       </GradleProjectSettings>
