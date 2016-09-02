@@ -1,1 +1,1 @@
-include ':refreshlist', ':timeline'
+include ':refreshlist', ':timeline', ':videolist'
